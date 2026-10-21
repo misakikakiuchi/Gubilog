@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ぐびログ</title>
+<style>
+:root{--bg:#fff4c9;--panel:#ffffff;--panel2:#fff0d9;--line:#3a2a1a;--soft:#f3d9a8;--ink:#3a2a1a;--dim:#8a7560;--lamp:#ff6b4a;--gold:#ffb703;--warn:#e63946;--mint:#2ec4b6;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d1730;--panel:#2b2342;--panel2:#382e57;--line:#0e0a1a;--soft:#4a3f73;--ink:#fff3e0;--dim:#b9acd6;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1d1730;--panel:#2b2342;--panel2:#382e57;--line:#0e0a1a;--soft:#4a3f73;--ink:#fff3e0;--dim:#b9acd6;color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic UI","Noto Sans JP",sans-serif;padding:10px 14px calc(88px + env(safe-area-inset-bottom,0px));max-width:520px;margin:0 auto;user-select:none}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+h1{font-size:22px;margin:4px 0 8px;font-weight:800}
+h2{font-size:15px;margin:20px 0 8px;font-weight:800}
+.card{background:var(--panel);border:2.5px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 4px 0 var(--line)}
+.memo{width:100%;background:transparent;border:0;border-bottom:2px dashed var(--soft);color:var(--ink);font:inherit;padding:6px 2px;user-select:text}
+input,select,textarea,button{font:inherit;color:var(--ink)}
+.top{display:flex;align-items:flex-end;gap:12px;margin-top:8px}
+.cnt{font-size:72px;line-height:1;font-weight:800}
+.cnt small{font-size:20px;margin-left:4px;color:var(--dim)}
+.tally{font-size:28px;letter-spacing:2px;color:var(--lamp);padding-bottom:4px;word-break:break-all;font-weight:800}
+.sub{display:flex;justify-content:space-between;margin-top:8px;color:var(--dim);font-size:14px}
+.sub b{color:var(--ink);font-size:20px}
+.bar{height:12px;background:var(--panel2);border:2px solid var(--line);border-radius:8px;margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--mint)}
+.bar.over i{background:var(--warn)}
+.note{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--panel2);font-size:14px;border:2px solid var(--line);font-weight:700}
+.icons{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+.ic{background:var(--panel);border:2.5px solid var(--line);border-radius:16px;padding:6px 2px 7px;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;box-shadow:0 3px 0 var(--line)}
+.ic .e{font-size:30px;line-height:1.1}
+.ic .n{font-size:11px;font-weight:800}
+.ic.on{background:var(--c);transform:translateY(-3px);box-shadow:0 6px 0 var(--line)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+.chips>span{font-size:12px;color:var(--dim);font-weight:800;width:100%;margin-bottom:-2px}
+.chip{min-height:44px;padding:0 14px;border-radius:999px;border:2.5px solid var(--line);background:var(--panel);font-weight:800;font-size:14px;cursor:pointer}
+.chip.on{background:var(--ink);color:var(--bg)}
+.bigwrap{display:flex;justify-content:center;margin:18px 0 8px}
+.big{width:min(70vw,270px);aspect-ratio:1;border-radius:50%;border:4px solid var(--line);background:var(--c);box-shadow:0 10px 0 var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;color:#3a2a1a;transition:transform .08s,box-shadow .08s}
+.big:active{transform:translateY(8px);box-shadow:0 2px 0 var(--line)}
+.big .e{font-size:84px;line-height:1.05}
+.big .l{font-size:15px;font-weight:800}
+.big .p{font-size:26px;font-weight:800}
+.btn{display:block;width:100%;min-height:52px;border-radius:14px;border:2.5px solid var(--line);background:var(--panel);margin-top:12px;font-weight:800;cursor:pointer;box-shadow:0 3px 0 var(--line)}
+.btn:active{transform:translateY(3px);box-shadow:none}
+.btn.pri{background:var(--lamp);color:#fff}
+.btn.danger{color:var(--warn)}
+.btn.sm{min-height:40px;margin:0;width:auto;padding:0 14px;font-size:14px}
+.row{display:flex;gap:8px;align-items:center}
+.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--panel);border-top:2.5px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:20;max-width:520px;margin:0 auto}
+.tabs button{flex:1;min-height:60px;background:none;border:0;color:var(--dim);font-weight:800;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.tabs button span{font-size:22px;line-height:1.1}
+.tabs button.on{color:var(--lamp);background:var(--panel2)}
+.pane{display:none}.pane.on{display:block}
+.hb{display:flex;align-items:center;gap:8px;margin:7px 0;font-size:14px;font-weight:700}
+.hb .n{width:84px;flex:none}.hb .t{flex:1;height:20px;background:var(--panel2);border:2px solid var(--line);border-radius:8px;overflow:hidden}.hb .t i{display:block;height:100%}.hb .v{width:78px;text-align:right;color:var(--dim);flex:none}
+.li{display:flex;justify-content:space-between;align-items:center;padding:12px 4px;border-bottom:2px dashed var(--soft);cursor:pointer}
+.d{color:var(--dim);font-size:13px}
+.sess{padding:12px;margin-top:10px}
+.toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:800;z-index:40;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap}
+.toast.on{opacity:1}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;z-index:50}
+.modal.on{display:flex}
+.sheet{background:var(--panel);width:100%;max-width:520px;margin:0 auto;border-radius:22px 22px 0 0;border:2.5px solid var(--line);padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px))}
+.sheet label{display:block;font-size:13px;color:var(--dim);margin-top:10px;font-weight:800}
+.sheet select,.sheet input{width:100%;min-height:48px;background:var(--panel2);border:2px solid var(--line);border-radius:12px;padding:0 10px}
+.set{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:2px dashed var(--soft);font-weight:700}
+.set input{width:84px;min-height:44px;background:var(--panel2);border:2px solid var(--line);border-radius:12px;text-align:right;padding:0 10px}
+textarea{width:100%;height:140px;background:var(--panel2);border:2px solid var(--line);border-radius:12px;padding:10px;font-size:13px;user-select:text}
+svg text{fill:var(--dim);font-size:10px;font-weight:700}
+.ax{stroke:var(--soft);stroke-width:2}.pl{fill:none;stroke:var(--lamp);stroke-width:3.5;stroke-linejoin:round}.dot{fill:var(--lamp)}.b1{fill:var(--gold)}.b2{fill:var(--lamp)}.bl{stroke:var(--warn);stroke-width:2;stroke-dasharray:4 3}
+.empty{color:var(--dim);font-size:14px;padding:10px 0}
+</style>
+</head>
+<body>
+
+<div id="rec" class="pane on"></div>
+<div id="ana" class="pane"></div>
+<div id="his" class="pane"></div>
+<div id="set" class="pane"></div>
+
+<div class="tabs" id="tabs"></div>
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+
+<script>
+var KEY="nomikiroku.v1";
+var TYPES=[
+{k:"ビール",e:"🍺",abv:5,c:"#ffb703",z:[["中ジョッキ",435],["グラス",200],["缶350",350],["缶500",500]]},
+{k:"ハイボール",e:"🥂",abv:7,c:"#4cc9f0",z:[["ジョッキ",350],["グラス",250],["缶350",350]]},
+{k:"日本酒",e:"🍶",abv:15,c:"#8fe3d8",z:[["1合",180],["グラス",90]]},
+{k:"ワイン",e:"🍷",abv:12,c:"#ff6b81",z:[["グラス",120],["大グラス",180],["ボトル半分",375]]},
+{k:"チューハイ",e:"🍹",abv:5,c:"#7bd389",z:[["ジョッキ",350],["缶350",350],["缶500",500]]},
+{k:"焼酎",e:"🍠",abv:25,c:"#f4a261",z:[["1杯",60],["ダブル",90]],m:["ロック","水割り","お湯割り","炭酸割り","ウーロン割り"]},
+{k:"ウイスキー",e:"🥃",abv:40,c:"#e0a458",z:[["シングル",30],["ダブル",60]],m:["ストレート","ロック","水割り","お湯割り","ソーダ割り","コーラ割り"]},
+{k:"その他",e:"🍸",abv:10,c:"#c4a6ff",z:[["1杯",100],["大",200]]}];
+var TABS=[["rec","🍻","記録"],["ana","📊","分析"],["his","📖","履歴"],["set","⚙️","設定"]];
+var S=Object.assign({sessions:[],cur:null,abv:{},vol:{},mix:{},sel:0,base:20,water:3},load()||{});
+var tab="rec",armed={},editId=null;
+
+function load(){try{var r=localStorage.getItem(KEY);return r?JSON.parse(r):null}catch(e){return null}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function p2(n){return(n<10?"0":"")+n}
+function hm(t){var d=new Date(t);return p2(d.getHours())+":"+p2(d.getMinutes())}
+function md(t){var d=new Date(t);return(d.getMonth()+1)+"/"+d.getDate()}
+function abvOf(i){var v=S.abv[TYPES[i].k];return v==null?TYPES[i].abv:v}
+function gOf(d){return d.ml*d.abv/100*0.8}
+function nm(d){return d.k+(d.m?"("+d.m+")":"")}
+function cur(){return S.sessions.filter(function(s){return s.id===S.cur})[0]}
+function newSession(){var s={id:Date.now(),start:Date.now(),memo:"",drinks:[]};S.sessions.push(s);S.cur=s.id}
+function sum(s){var g=0;s.drinks.forEach(function(d){g+=gOf(d)});return g}
+if(!cur())newSession();
+if(!TYPES[S.sel])S.sel=0;
+
+function toast(m){var e=document.getElementById("toast");e.textContent=m;e.className="toast on";clearTimeout(toast.t);toast.t=setTimeout(function(){e.className="toast"},1400)}
+function tally(n){var s="",f=Math.floor(n/5);for(var i=0;i<f;i++)s+="正";return s+(["","一","丁","下","止"][n%5])}
+
+function sel(i){S.sel=i;save();render()}
+function setVol(v){S.vol[TYPES[S.sel].k]=v;save();render()}
+function setMix(v){S.mix[TYPES[S.sel].k]=v;save();render()}
+function rec(){
+ var i=S.sel,t=TYPES[i],z=t.z[S.vol[t.k]||0]||t.z[0];
+ var d={id:Date.now()+Math.random(),t:Date.now(),k:t.k,ml:z[1],abv:abvOf(i)};
+ if(t.m)d.m=t.m[S.mix[t.k]||0];
+ cur().drinks.push(d);save();render();toast(t.e+" "+nm(d)+" 乾杯!");
+ if(navigator.vibrate){try{navigator.vibrate(20)}catch(e){}}
+}
+function undo(){var s=cur();if(!s.drinks.length){toast("戻せる記録がありません");return}var d=s.drinks.pop();save();render();toast(nm(d)+" を1杯戻しました")}
+function setMemo(v){cur().memo=v;save()}
+function startNew(){
+ if(!armed.n){armed.n=1;render();setTimeout(function(){armed.n=0;render()},3000);return}
+ armed.n=0;newSession();save();render();toast("新しい飲み会を開始しました")
+}
+function sw(t){tab=t;render();window.scrollTo(0,0)}
+
+function renderRec(){
+ var s=cur(),n=s.drinks.length,g=sum(s),over=g>=S.base,pct=Math.min(100,g/S.base*100),t=TYPES[S.sel],h="";
+ h+='<h1>🍻 ぐびログ</h1><div class="card"><input class="memo" placeholder="一言メモ(店名・誰と)" value="'+esc(s.memo)+'" oninput="setMemo(this.value)">';
+ h+='<div class="top"><div class="cnt">'+n+'<small>杯</small></div><div class="tally">'+tally(n)+'</div></div>';
+ h+='<div class="sub"><span>純アルコール <b>'+g.toFixed(1)+'</b> g</span><span>'+(g/20).toFixed(1)+' 単位</span></div>';
+ h+='<div class="bar'+(over?" over":"")+'"><i style="width:'+pct+'%"></i></div>';
+ if(n>0&&n%S.water===0)h+='<div class="note">💧 お水を一杯どうぞ。'+n+'杯目です。</div>';
+ else if(over)h+='<div class="note">目安の'+S.base+'gを超えました。ここからはゆっくりめに。</div>';
+ h+='</div><div class="icons">';
+ TYPES.forEach(function(x,i){h+='<button class="ic'+(i===S.sel?" on":"")+'" style="--c:'+x.c+'" onclick="sel('+i+')"><span class="e">'+x.e+'</span><span class="n">'+x.k+'</span></button>'});
+ h+='</div>';
+ if(t.m){var mi=S.mix[t.k]||0;h+='<div class="chips"><span>割り方</span>';t.m.forEach(function(m,j){h+='<button class="chip'+(j===mi?" on":"")+'" onclick="setMix('+j+')">'+m+'</button>'});h+='</div>'}
+ var zi=S.vol[t.k]||0;
+ h+='<div class="chips"><span>'+(t.m?"量(原酒の量)":"量")+'</span>';
+ t.z.forEach(function(z,j){h+='<button class="chip'+(j===zi?" on":"")+'" onclick="setVol('+j+')">'+z[0]+" "+z[1]+'ml</button>'});
+ h+='</div>';
+ var z=t.z[zi]||t.z[0],lab=t.k+(t.m?"("+t.m[S.mix[t.k]||0]+")":"")+" "+z[0];
+ h+='<div class="bigwrap"><button class="big" style="--c:'+t.c+'" onclick="rec()" aria-label="1杯記録"><span class="e">'+t.e+'</span><span class="l">'+lab+'</span><span class="p">+1杯!</span></button></div>';
+ h+='<button class="btn" onclick="undo()">↩ 1杯戻す</button>';
+ h+='<button class="btn '+(armed.n?"danger":"")+'" onclick="startNew()">'+(armed.n?"もう一度押すと新しい飲み会を開始":"新しい飲み会を開始")+'</button>';
+ return h;
+}
+
+function renderAna(){
+ var s=cur(),d=s.drinks.slice().sort(function(a,b){return a.t-b.t}),n=d.length,h="";
+ if(!n)return'<h2>この飲み会の分析</h2><div class="empty">記録するとここにグラフが出ます。</div>';
+ var by={},mx=0;
+ d.forEach(function(x){by[x.k]=by[x.k]||{c:0,g:0};by[x.k].c++;by[x.k].g+=gOf(x)});
+ TYPES.forEach(function(t){if(by[t.k])mx=Math.max(mx,by[t.k].c)});
+ h+='<h2>種類別の内訳</h2><div class="card">';
+ TYPES.forEach(function(t){var b=by[t.k];if(!b)return;
+  h+='<div class="hb"><span class="n">'+t.e+" "+t.k+'</span><span class="t"><i style="width:'+b.c/mx*100+'%;background:'+t.c+'"></i></span><span class="v">'+b.c+'杯 '+b.g.toFixed(0)+'g</span></div>'});
+ h+='</div><h2>飲むペース</h2><div class="card">';
+ var span=d[n-1].t-d[0].t;
+ if(n>=2){
+  var avg=span/(n-1)/60000,W=320,H=140,P=24,pts=[];
+  h+='<div class="sub" style="margin:0 0 8px"><span>平均 <b>'+avg.toFixed(0)+'</b> 分に1杯</span><span>'+hm(d[0].t)+" から "+hm(d[n-1].t)+'</span></div>';
+  d.forEach(function(x,i){pts.push([P+(x.t-d[0].t)/(span||1)*(W-P-8),H-(i+1)/n*(H-14)])});
+  var path="M"+P+","+H;pts.forEach(function(q){path+=" H"+q[0]+" V"+q[1]});
+  h+='<svg viewBox="0 0 '+(W+8)+' '+(H+20)+'" width="100%" role="img" aria-label="累計杯数の推移"><line class="ax" x1="'+P+'" y1="'+H+'" x2="'+W+'" y2="'+H+'"/><path class="pl" d="'+path+'"/>';
+  pts.forEach(function(q){h+='<circle class="dot" cx="'+q[0]+'" cy="'+q[1]+'" r="4"/>'});
+  h+='<text x="0" y="12">'+n+'</text><text x="'+P+'" y="'+(H+14)+'">'+hm(d[0].t)+'</text><text x="'+(W-30)+'" y="'+(H+14)+'">'+hm(d[n-1].t)+'</text></svg>';
+ }else h+='<div class="empty">2杯以上でペースが表示されます。</div>';
+ var g=sum(s);
+ h+='</div><h2>純アルコール量の目安</h2><div class="card"><div class="sub" style="margin:0"><span>今回 <b>'+g.toFixed(1)+'</b> g('+(g/20).toFixed(1)+'単位)</span><span>目安 '+S.base+' g</span></div><div class="bar'+(g>=S.base?" over":"")+'"><i style="width:'+Math.min(100,g/S.base*100)+'%"></i></div>';
+ if(g>=S.base)h+='<div class="note">目安を超えています。お水と休肝日も忘れずに。</div>';
+ return h+'</div>';
+}
+
+function renderHis(){
+ var all=S.sessions.slice().reverse(),h="",s=cur(),last=S.sessions.slice(-10),mg=S.base;
+ last.forEach(function(x){mg=Math.max(mg,sum(x))});
+ h+='<h2>飲み会ごとの比較(直近10回・純アルコール g)</h2><div class="card">';
+ if(last.some(function(x){return x.drinks.length})){
+  var W=320,H=110,bw=W/last.length;
+  h+='<svg viewBox="0 0 '+W+' '+(H+22)+'" width="100%" role="img" aria-label="飲み会ごとの純アルコール量">';
+  last.forEach(function(x,i){var g=sum(x),bh=g/mg*H;
+   h+='<rect class="'+(x.id===S.cur?"b2":"b1")+'" x="'+(i*bw+bw*.18)+'" y="'+(H-bh)+'" width="'+bw*.64+'" height="'+bh+'" rx="4"/><text x="'+(i*bw+bw*.5)+'" y="'+(H+14)+'" text-anchor="middle">'+md(x.start)+'</text><text x="'+(i*bw+bw*.5)+'" y="'+(H-bh-3)+'" text-anchor="middle">'+g.toFixed(0)+'</text>'});
+  var by=H-S.base/mg*H;
+  h+='<line class="bl" x1="0" x2="'+W+'" y1="'+by+'" y2="'+by+'"/></svg>';
+ }else h+='<div class="empty">記録が増えると比較できます。</div>';
+ h+='</div><h2>今夜の記録(タップで修正)</h2><div class="card" style="padding:4px 12px">';
+ if(!s.drinks.length)h+='<div class="empty">まだ記録がありません。</div>';
+ s.drinks.slice().reverse().forEach(function(d){
+  h+='<div class="li" onclick="openEdit(\''+d.id+'\')"><span><b>'+esc(nm(d))+'</b> <span class="d">'+d.ml+'ml '+d.abv+'%</span></span><span class="d">'+hm(d.t)+'</span></div>'});
+ h+='</div><h2>過去の飲み会</h2>';
+ all.forEach(function(x){
+  var c=x.id===S.cur;
+  h+='<div class="card sess"><div class="row" style="justify-content:space-between"><b>'+md(x.start)+" "+hm(x.start)+(c?' <span style="color:var(--lamp)">(いま)</span>':"")+'</b><b>'+x.drinks.length+'杯 / '+sum(x).toFixed(0)+'g</b></div>';
+  h+='<div class="d" style="margin:4px 0 8px">'+(esc(x.memo)||"メモなし")+'</div><div class="row">';
+  if(!c)h+='<button class="btn sm" onclick="openSess('+x.id+')">開く</button>';
+  h+='<button class="btn sm danger" onclick="delSess('+x.id+')">'+(armed["s"+x.id]?"もう一度押して削除":"削除")+'</button></div></div>'});
+ return h;
+}
+function openSess(id){S.cur=id;save();tab="rec";render();toast("この飲み会を開きました")}
+function delSess(id){
+ var k="s"+id;
+ if(!armed[k]){armed[k]=1;render();setTimeout(function(){armed[k]=0;render()},3000);return}
+ armed[k]=0;S.sessions=S.sessions.filter(function(x){return x.id!==id});
+ if(!S.sessions.length)newSession();else if(S.cur===id)S.cur=S.sessions[S.sessions.length-1].id;
+ save();render();toast("削除しました")
+}
+
+function loc(t){var d=new Date(t);return d.getFullYear()+"-"+p2(d.getMonth()+1)+"-"+p2(d.getDate())+"T"+p2(d.getHours())+":"+p2(d.getMinutes())}
+function openEdit(id){
+ var d=cur().drinks.filter(function(x){return String(x.id)===id})[0];if(!d)return;
+ editId=id;
+ var o="";TYPES.forEach(function(t){o+='<option'+(t.k===d.k?" selected":"")+'>'+t.k+'</option>'});
+ document.getElementById("sheet").innerHTML='<b>記録を修正</b><label>種類</label><select id="eK">'+o+'</select><label>容量(ml)</label><input id="eM" type="number" inputmode="numeric" value="'+d.ml+'"><label>度数(%)</label><input id="eA" type="number" inputmode="decimal" value="'+d.abv+'"><label>時刻</label><input id="eT" type="datetime-local" value="'+loc(d.t)+'"><button class="btn pri" onclick="saveEdit()">保存</button><button class="btn danger" onclick="delDrink()">この1杯を削除</button><button class="btn" onclick="closeM()">閉じる</button>';
+ document.getElementById("modal").className="modal on";
+}
+function closeM(){document.getElementById("modal").className="modal"}
+function saveEdit(){
+ var d=cur().drinks.filter(function(x){return String(x.id)===editId})[0];if(!d)return closeM();
+ d.k=document.getElementById("eK").value;
+ d.ml=Math.max(0,+document.getElementById("eM").value||d.ml);
+ d.abv=Math.max(0,+document.getElementById("eA").value||d.abv);
+ var t=new Date(document.getElementById("eT").value).getTime();if(!isNaN(t))d.t=t;
+ cur().drinks.sort(function(a,b){return a.t-b.t});
+ save();closeM();render();toast("修正しました")
+}
+function delDrink(){cur().drinks=cur().drinks.filter(function(x){return String(x.id)!==editId});save();closeM();render();toast("削除しました")}
+
+function exportText(){
+ var o="";
+ S.sessions.forEach(function(s){
+  o+="■ "+md(s.start)+" "+hm(s.start)+(s.memo?" "+s.memo:"")+"\n"+s.drinks.length+"杯 / 純アルコール "+sum(s).toFixed(1)+"g\n";
+  s.drinks.forEach(function(d){o+="  "+hm(d.t)+" "+nm(d)+" "+d.ml+"ml "+d.abv+"%\n"});o+="\n"});
+ return o;
+}
+function copyAll(){
+ var ta=document.getElementById("exp");ta.select();
+ var done=false;
+ try{if(navigator.clipboard){navigator.clipboard.writeText(ta.value);done=true}}catch(e){}
+ if(!done){try{done=document.execCommand("copy")}catch(e){}}
+ toast(done?"コピーしました":"テキストを長押ししてコピーしてください");
+}
+function setBase(v){S.base=Math.max(1,+v||20);save()}
+function setWater(v){S.water=Math.max(1,Math.round(+v)||3);save()}
+function setAbv(i,v){S.abv[TYPES[i].k]=Math.max(0,+v||0);save()}
+function renderSet(){
+ var h='<h2>目安・リマインド</h2><div class="card" style="padding:4px 14px"><div class="set"><span>純アルコール目安(g)</span><input type="number" inputmode="numeric" value="'+S.base+'" onchange="setBase(this.value)"></div><div class="set" style="border:0"><span>お水を促す間隔(杯)</span><input type="number" inputmode="numeric" value="'+S.water+'" onchange="setWater(this.value)"></div></div>';
+ h+='<h2>お酒ごとの度数(%)</h2><div class="card" style="padding:4px 14px">';
+ TYPES.forEach(function(t,i){h+='<div class="set"><span>'+t.e+" "+t.k+'</span><input type="number" inputmode="decimal" value="'+abvOf(i)+'" onchange="setAbv('+i+',this.value)"></div>'});
+ h+='</div><h2>データの書き出し</h2><textarea id="exp" readonly>'+esc(exportText())+'</textarea><button class="btn pri" onclick="copyAll()">全記録をコピー</button>';
+ h+='<p class="empty">純アルコール(g)= 量(ml) × 度数 × 0.8 ÷ 100。20gを1単位としています。焼酎・ウイスキーは原酒の量で計算します。</p>';
+ return h;
+}
+
+function render(){
+ var tb="";TABS.forEach(function(t){tb+='<button class="'+(t[0]===tab?"on":"")+'" onclick="sw(\''+t[0]+'\')"><span>'+t[1]+'</span>'+t[2]+'</button>'});
+ document.getElementById("tabs").innerHTML=tb;
+ TABS.forEach(function(t){document.getElementById(t[0]).className="pane"+(t[0]===tab?" on":"")});
+ var a=document.activeElement;
+ if(a&&a.classList&&a.classList.contains("memo")&&tab==="rec")return;
+ var m={rec:renderRec,ana:renderAna,his:renderHis,set:renderSet};
+ document.getElementById(tab).innerHTML=m[tab]();
+}
+render();
+</script>
+</body>
+</html>
